@@ -1,4 +1,6 @@
-You are most probably accessing this repository from a Rpubs link which contains my report. 
+You are most probably accessing this repository from a Rpubs link which contains my report.
+http://rpubs.com/Francescarcidiacono/MachineLearning
+
 Below the instruction for this assignment. 
 In this repository, the data and the tests as well as the .Rmd and .html documents. 
 
