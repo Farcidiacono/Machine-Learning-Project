@@ -1,0 +1,95 @@
+---
+title: "Machine Learning Assignment - April 2017"
+author: "Francesca Arcidiacono"
+date: "21 aprile 2017"
+output: html_document
+---
+
+Link to github: https://github.com/Farcidiacono/Machine-Learning-Project
+
+## Course Project Assignment: Instructions
+
+### Background
+
+Using devices such as Jawbone Up, Nike FuelBand, and Fitbit it is now possible to collect a large amount of data about personal activity relatively inexpensively. These type of devices are part of the quantified self movement – a group of enthusiasts who take measurements about themselves regularly to improve their health, to find patterns in their behavior, or because they are tech geeks. One thing that people regularly do is quantify how much of a particular activity they do, but they rarely quantify how well they do it. In this project, your goal will be to use data from accelerometers on the belt, forearm, arm, and dumbell of 6 participants. They were asked to perform barbell lifts correctly and incorrectly in 5 different ways. More information is available from the website here: http://groupware.les.inf.puc-rio.br/har (see the section on the Weight Lifting Exercise Dataset).
+
+### Data
+
+The training data for this project are available here: https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv
+
+The test data are available here: https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv
+
+The data for this project come from this source: http://groupware.les.inf.puc-rio.br/har. If you use the document you create for this class for any purpose please cite them as they have been very generous in allowing their data to be used for this kind of assignment.
+
+
+## Bullet points on what to do
+
+1. Load, clean the dataset and process data
+Data needs to be cleaned, eliminating data with little information and and the ones which cannot be           explanatories variables.  
+2. Use cross-validation method to build a model
+3. Apply random forest method to build a model. This model will be checked with the testing data set and applied to predict 20 different test cases. 
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+##Loading Libraries
+
+```{r libraries, echo=TRUE}
+library(caret)
+library(randomForest)
+library(rpart)
+```
+
+##Loading data and getting basic details
+###Load training and testing data, and than replace invalid strings as NA
+
+```{r data, echo=TRUE}
+setwd("C:/Users/utente/Desktop/Learning/machine learning")
+training <- read.csv("pml-training.csv", na.strings = c("NA", "#DIV/0!", ""))
+testing  <- read.csv("pml-testing.csv",  na.strings = c("NA", "#DIV/0!", ""))
+
+dim(training)
+summary(training)
+colnames(training)
+
+dim(testing)
+summary(testing)
+colnames(testing)
+```
+
+##Cleaning and processing data
+###Eliminating data with little information and and the ones which cannot be explanatories variables.
+```{r cleaning, echo=TRUE}
+training <- training[, colSums(is.na(testing)) == 0]
+training  <- training[, -c(1:7)]
+
+testing  <- testing[, colSums(is.na(testing)) == 0]
+testing  <- testing[, -c(1:7)]
+```
+
+##Crossvalidation
+###sub-groups: 75% and 25%
+```{r crossvalidation, echo=TRUE}
+part_ind  <- createDataPartition(y = training$classe, p = 0.75, list = FALSE,)
+sub_training  <- training[part_ind,]
+sub_testing  <- training[-part_ind,]
+```
+
+##Apply ramdom forest method 
+###Random forest(non-bionominal outcome & large sample size)
+```{r rando, echo=TRUE}
+rand_forest_model <- randomForest(classe ~. , data = sub_training, method = "class")
+pred_rand_forest <- predict(rand_forest_model, sub_testing, type = "class")
+```
+
+###Predict outcomes using random forest model
+```{r outcomes, echo=TRUE}
+final_pred <- predict(rand_forest_model, testing, type = "class")
+final_pred
+```
+
+
+
+
+
